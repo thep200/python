@@ -83,10 +83,9 @@ class meter_img:
         for c in cnts:
             area = cv2.contourArea(c)
             if area < average * 2:
-                cv2.drawContours(dilate, [c], -1, (0, 0, 0), -1)
+                cv2.drawContours(self.thresh, [c], -1, (0, 0, 0), -1)
 
-        result = cv2.bitwise_and(self.img, self.img, mask=dilate)
-        result[dilate == 0] = (255, 255, 255)
+        result = 255 - self.thresh
         return result
 
 
@@ -110,10 +109,6 @@ def main():
     plt.imshow(img.clean_roi(), cmap='gray')
 
     plt.show()
-
-    # cv2.imshow('roi', img.extract_ROI())
-    # cv2.imshow('result', img.clean_roi())
-    # cv2.waitKey()
 
 if __name__ == "__main__":
     main()

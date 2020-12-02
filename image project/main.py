@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 pyt.pytesseract.tesseract_cmd = r'C:\Users\Thep Ho\AppData\Local\Programs\Tesseract-OCR\tesseract.exe'
 
 root_input_img = 'images/root.png'
-ROI_saved_path = 'output/roi.png'
+ROI_saved_path = 'output/rod.png'
 
 class meter_img:
 
@@ -33,7 +33,7 @@ class meter_img:
         return cnts
 
 
-    def extract_ROI(self):
+    def extractRegionOfDigits(self):
         self.img_load(root_input_img)
 
         # trộn các phần đã threshold với nhau để lấy phần lớn nhất.
@@ -58,7 +58,7 @@ class meter_img:
         cv2.imwrite(ROI_saved_path, ROI)
         return ROI
 
-    def clean_roi(self):
+    def cleanRegionOfDigits(self):
         self.img_load(ROI_saved_path)
         self.thresh = cv2.threshold(self.img_gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
 
@@ -90,7 +90,7 @@ class meter_img:
 
 
     def read_img(self):
-        my_digits = pyt.image_to_string(self.clean_roi())
+        my_digits = pyt.image_to_string(self.cleanRegionOfDigits())
         print("your digits is:", my_digits)
 
         file = open('output/digits.txt', 'a')
@@ -100,13 +100,14 @@ class meter_img:
 
 def main():
     img = meter_img()
-    img.read_img()
-
+    
     plt.subplot(1, 2, 1)
-    plt.imshow(img.extract_ROI(), cmap='gray')
+    plt.imshow(img.extractRegionOfDigits(), cmap='gray')
 
     plt.subplot(1, 2, 2)
-    plt.imshow(img.clean_roi(), cmap='gray')
+    plt.imshow(img.cleanRegionOfDigits(), cmap='gray')
+
+    img.read_img()
 
     plt.show()
 

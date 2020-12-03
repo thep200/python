@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 pyt.pytesseract.tesseract_cmd = r'C:\Users\Thep Ho\AppData\Local\Programs\Tesseract-OCR\tesseract.exe'
 
 root_input_img = 'images/root.png'
-ROI_saved_path = 'output/rod.png'
+rod_saved_path = 'output/rod.png'
 
 class meter_img:
 
@@ -52,14 +52,14 @@ class meter_img:
         for cnt in cnts:      
             if cv2.contourArea(cnt) < process_area:   
                 x1, y1, x2, y2 = cv2.boundingRect(cnt)
-                ROI = 255 - self.thresh[y1:y1 + y2, x1:x1 + x2]
+                rod = 255 - self.thresh[y1:y1 + y2, x1:x1 + x2]
                 break
 
-        cv2.imwrite(ROI_saved_path, ROI)
-        return ROI
+        cv2.imwrite(rod_saved_path, rod)
+        return rod
 
     def cleanRegionOfDigits(self):
-        self.img_load(ROI_saved_path)
+        self.img_load(rod_saved_path)
         self.thresh = cv2.threshold(self.img_gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
 
         average_area = 0
@@ -73,7 +73,7 @@ class meter_img:
         for c in cnts:
             x, y, width, height = cv2.boundingRect(c)
             area = width * height
-            if area > average * 3:
+            if area > average*2:
                 cv2.drawContours(self.thresh, [c], -1, (0, 0, 0), -1)
 
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 1))
@@ -82,7 +82,7 @@ class meter_img:
         cnts = self.find_countours(dilate)
         for c in cnts:
             area = cv2.contourArea(c)
-            if area < average * 2:
+            if area < average*2:
                 cv2.drawContours(self.thresh, [c], -1, (0, 0, 0), -1)
 
         result = 255 - self.thresh
